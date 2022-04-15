@@ -22,8 +22,8 @@ export function shouldBehaveLikeVaultHub(): void {
     let sig = ethers.utils.splitSignature(flatSig);
 
     await this.vaultHub.initPrivateVault(address, sig.v, sig.r, sig.s);
-    await this.vaultHub.savePrivateData(address, "Hello Seedlist1", "label1");
-    await this.vaultHub.savePrivateData(address, "Hello Seedlist2", "label2");
+    await this.vaultHub.savePrivateData(address, "Hello Seedlist1", "label1",true);
+    await this.vaultHub.savePrivateData(address, "Hello Seedlist2", "label2", true);
     console.log("query result by name:", await this.vaultHub.queryPrivateDataByName(address, "label2"));
     console.log("query result by index:", await this.vaultHub.queryPrivateDataByIndex(address, 0));
   });

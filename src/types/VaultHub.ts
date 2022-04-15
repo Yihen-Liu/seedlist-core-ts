@@ -31,7 +31,7 @@ export interface VaultHubInterface extends utils.Interface {
     "initPrivateVault(address,uint8,bytes32,bytes32)": FunctionFragment;
     "queryPrivateDataByIndex(address,uint16)": FunctionFragment;
     "queryPrivateDataByName(address,string)": FunctionFragment;
-    "savePrivateData(address,string,string)": FunctionFragment;
+    "savePrivateData(address,string,string,bool)": FunctionFragment;
   };
 
   getFunction(
@@ -56,7 +56,7 @@ export interface VaultHubInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "savePrivateData",
-    values: [string, string, string]
+    values: [string, string, string, boolean]
   ): string;
 
   decodeFunctionResult(
@@ -152,6 +152,7 @@ export interface VaultHub extends BaseContract {
       addr: string,
       data: string,
       cryptoLabel: string,
+      minted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -180,6 +181,7 @@ export interface VaultHub extends BaseContract {
     addr: string,
     data: string,
     cryptoLabel: string,
+    minted: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -208,6 +210,7 @@ export interface VaultHub extends BaseContract {
       addr: string,
       data: string,
       cryptoLabel: string,
+      minted: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -254,6 +257,7 @@ export interface VaultHub extends BaseContract {
       addr: string,
       data: string,
       cryptoLabel: string,
+      minted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -283,6 +287,7 @@ export interface VaultHub extends BaseContract {
       addr: string,
       data: string,
       cryptoLabel: string,
+      minted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

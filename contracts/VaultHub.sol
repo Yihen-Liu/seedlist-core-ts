@@ -7,6 +7,9 @@ contract PrivateVault {
     address private signer;
     address private caller;
 
+    // 每个vault只能参与一次mint seed 行为
+    bool public minted;
+
     //用来判断某个label是否已经存在
     mapping(address => bool) private labelExist;
 
@@ -27,10 +30,11 @@ contract PrivateVault {
         signer = _signer;
         caller = _caller;
         total = 0;
+        minted = false;
     }
 
     //cryptoLabel 是加密后的label值
-    function save(string memory data, string memory cryptoLabel) auth external {
+    function save(string memory data, string memory cryptoLabel, bool _minted) auth external {
         address labelAddr = address(uint160(uint256(keccak256(abi.encodePacked(cryptoLabel)))));
         //label没有被使用过
         require(labelExist[labelAddr] == false, "Label has exist");
@@ -39,6 +43,10 @@ contract PrivateVault {
         labels[total] = cryptoLabel;
         total++;
         labelExist[labelAddr] = true;
+
+        if(_minted==true&& minted==false){
+            minted = true;
+        }
     }
 
     function getLabelByIndex(uint16 index) auth external view returns (string memory) {
@@ -118,7 +126,8 @@ contract VaultHub {
     function savePrivateData(
         address addr,
         string memory data,
-        string memory cryptoLabel
+        string memory cryptoLabel,
+        bool minted
     ) external {
         bytes32 salt = keccak256(abi.encodePacked(addr));
         bytes memory bytecode = abi.encodePacked(type(PrivateVault).creationCode, abi.encode(addr, this));
@@ -130,8 +139,10 @@ contract VaultHub {
             vault.code.length > 0 && vault.codehash == keccak256(abi.encodePacked(type(PrivateVault).runtimeCode)),
             "Deploy vault contract firstly"
         );
-
-        PrivateVault(vault).save(data, cryptoLabel);
+        if(minted==true && PrivateVault(vault).minted()==false){
+            console.log("minted SEED token success.");
+        }
+        PrivateVault(vault).save(data, cryptoLabel, minted);
         emit Save(State.SAVE_SUCCESS, addr);
     }
 
