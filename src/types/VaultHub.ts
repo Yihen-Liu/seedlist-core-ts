@@ -29,14 +29,16 @@ import type {
 export interface VaultHubInterface extends utils.Interface {
   functions: {
     "initPrivateVault(address,uint8,bytes32,bytes32)": FunctionFragment;
-    "queryPrivateData(address)": FunctionFragment;
-    "savePrivateData(address,string)": FunctionFragment;
+    "queryPrivateDataByIndex(address,uint16)": FunctionFragment;
+    "queryPrivateDataByName(address,string)": FunctionFragment;
+    "savePrivateData(address,string,string)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "initPrivateVault"
-      | "queryPrivateData"
+      | "queryPrivateDataByIndex"
+      | "queryPrivateDataByName"
       | "savePrivateData"
   ): FunctionFragment;
 
@@ -45,12 +47,16 @@ export interface VaultHubInterface extends utils.Interface {
     values: [string, BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "queryPrivateData",
-    values: [string]
+    functionFragment: "queryPrivateDataByIndex",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "queryPrivateDataByName",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "savePrivateData",
-    values: [string, string]
+    values: [string, string, string]
   ): string;
 
   decodeFunctionResult(
@@ -58,7 +64,11 @@ export interface VaultHubInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "queryPrivateData",
+    functionFragment: "queryPrivateDataByIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "queryPrivateDataByName",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -126,14 +136,22 @@ export interface VaultHub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    queryPrivateData(
+    queryPrivateDataByIndex(
       addr: string,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    queryPrivateDataByName(
+      addr: string,
+      label: string,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     savePrivateData(
       addr: string,
       data: string,
+      cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -146,11 +164,22 @@ export interface VaultHub extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  queryPrivateData(addr: string, overrides?: CallOverrides): Promise<string>;
+  queryPrivateDataByIndex(
+    addr: string,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  queryPrivateDataByName(
+    addr: string,
+    label: string,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   savePrivateData(
     addr: string,
     data: string,
+    cryptoLabel: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -163,11 +192,22 @@ export interface VaultHub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    queryPrivateData(addr: string, overrides?: CallOverrides): Promise<string>;
+    queryPrivateDataByIndex(
+      addr: string,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    queryPrivateDataByName(
+      addr: string,
+      label: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     savePrivateData(
       addr: string,
       data: string,
+      cryptoLabel: string,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -198,14 +238,22 @@ export interface VaultHub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    queryPrivateData(
+    queryPrivateDataByIndex(
       addr: string,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    queryPrivateDataByName(
+      addr: string,
+      label: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     savePrivateData(
       addr: string,
       data: string,
+      cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -219,14 +267,22 @@ export interface VaultHub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    queryPrivateData(
+    queryPrivateDataByIndex(
       addr: string,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    queryPrivateDataByName(
+      addr: string,
+      label: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     savePrivateData(
       addr: string,
       data: string,
+      cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -23,17 +24,37 @@ import type {
 
 export interface PrivateVaultInterface extends utils.Interface {
   functions: {
-    "_query()": FunctionFragment;
-    "_save(string)": FunctionFragment;
+    "getLabelByIndex(uint16)": FunctionFragment;
+    "getLabelByName(string)": FunctionFragment;
+    "save(string,string)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "_query" | "_save"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "getLabelByIndex" | "getLabelByName" | "save"
+  ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "_query", values?: undefined): string;
-  encodeFunctionData(functionFragment: "_save", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getLabelByIndex",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLabelByName",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "save",
+    values: [string, string]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "_query", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_save", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getLabelByIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLabelByName",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "save", data: BytesLike): Result;
 
   events: {};
 }
@@ -65,43 +86,79 @@ export interface PrivateVault extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _query(overrides?: CallOverrides): Promise<[string]>;
+    getLabelByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    _save(
+    getLabelByName(name: string, overrides?: CallOverrides): Promise<[string]>;
+
+    save(
       data: string,
+      cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  _query(overrides?: CallOverrides): Promise<string>;
+  getLabelByIndex(
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  _save(
+  getLabelByName(name: string, overrides?: CallOverrides): Promise<string>;
+
+  save(
     data: string,
+    cryptoLabel: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _query(overrides?: CallOverrides): Promise<string>;
+    getLabelByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    _save(data: string, overrides?: CallOverrides): Promise<void>;
+    getLabelByName(name: string, overrides?: CallOverrides): Promise<string>;
+
+    save(
+      data: string,
+      cryptoLabel: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    _query(overrides?: CallOverrides): Promise<BigNumber>;
+    getLabelByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    _save(
+    getLabelByName(name: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    save(
       data: string,
+      cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _query(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getLabelByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    _save(
+    getLabelByName(
+      name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    save(
       data: string,
+      cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -2,6 +2,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { task } from "hardhat/config";
 import { TaskArguments } from "hardhat/types";
 
+/*
 import { Greeter } from "../../src/types/Greeter";
 import { Greeter__factory } from "../../src/types/factories/Greeter__factory";
 
@@ -14,3 +15,4 @@ task("deploy:Greeter")
     await greeter.deployed();
     console.log("Greeter deployed to: ", greeter.address);
   });
+*/
