@@ -16,12 +16,39 @@ declare module "hardhat/types/runtime" {
       name: "Greeter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Greeter__factory>;
+    getContractFactory(
+      name: "PrivateVault",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PrivateVault__factory>;
+    getContractFactory(
+      name: "Saver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Saver__factory>;
+    getContractFactory(
+      name: "VaultHub",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VaultHub__factory>;
 
     getContractAt(
       name: "Greeter",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Greeter>;
+    getContractAt(
+      name: "PrivateVault",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PrivateVault>;
+    getContractAt(
+      name: "Saver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Saver>;
+    getContractAt(
+      name: "VaultHub",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VaultHub>;
 
     // default types
     getContractFactory(

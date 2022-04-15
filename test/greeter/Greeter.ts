@@ -2,9 +2,10 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { artifacts, ethers, waffle } from "hardhat";
 import type { Artifact } from "hardhat/types";
 
-import type { Greeter } from "../../src/types/Greeter";
+import type { Greeter } from "../../src/types";
+import type { VaultHub } from "../../src/types";
 import { Signers } from "../types";
-import { shouldBehaveLikeGreeter } from "./Greeter.behavior";
+import { shouldBehaveLikeGreeter, shouldBehaveLikeVaultHub } from "./Greeter.behavior";
 
 describe("Unit tests", function () {
   before(async function () {
@@ -18,9 +19,11 @@ describe("Unit tests", function () {
     beforeEach(async function () {
       const greeting: string = "Hello, world!";
       const greeterArtifact: Artifact = await artifacts.readArtifact("Greeter");
+      const vaultHubArtifact: Artifact = await artifacts.readArtifact("VaultHub");
       this.greeter = <Greeter>await waffle.deployContract(this.signers.admin, greeterArtifact, [greeting]);
+      this.vaultHub = <VaultHub>await waffle.deployContract(this.signers.admin, vaultHubArtifact);
     });
 
-    shouldBehaveLikeGreeter();
+    shouldBehaveLikeVaultHub();
   });
 });

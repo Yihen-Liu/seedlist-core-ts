@@ -2138,6 +2138,7 @@ __metadata:
     "@types/node": ^17.0.23
     "@typescript-eslint/eslint-plugin": ^5.17.0
     "@typescript-eslint/parser": ^5.17.0
+    bip39: ^3.0.4
     chai: ^4.3.6
     commitizen: ^4.2.4
     cross-env: ^7.0.3
@@ -2628,6 +2629,13 @@ __metadata:
   version: 15.3.0
   resolution: "@types/node@npm:15.3.0"
   checksum: fb9d6c4e9be5cc7b972b97bbbe4e111f48be284ae173d6946bc336ffec8dd3bf024a3c2fb0f065e07ae499127b8ff2aa5ab098a37ca03be1b5856ba499d6f2a4
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:11.11.6":
+  version: 11.11.6
+  resolution: "@types/node@npm:11.11.6"
+  checksum: 075f1c011cf568e49701419acbcb55c24906b3bb5a34d9412a3b88f228a7a78401a5ad4d3e1cd6855c99aaea5ef96e37fc86ca097e50f06da92cf822befc1fff
   languageName: node
   linkType: hard
 
@@ -4276,6 +4284,18 @@ __metadata:
     safe-buffer: ^5.0.1
     unorm: ^1.3.3
   checksum: 26e83583c43a8430afea1c385328b447005c74ddaf997cd8d3e416057f4968360b08ebf7de32374d605295c3abdd7ddd448d8078a2aa3d951735f4499c23875b
+  languageName: node
+  linkType: hard
+
+"bip39@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "bip39@npm:3.0.4"
+  dependencies:
+    "@types/node": 11.11.6
+    create-hash: ^1.1.0
+    pbkdf2: ^3.0.9
+    randombytes: ^2.0.1
+  checksum: 79ce1600a03d1ba5053bdd4e6323f9463ec340764c7e52918b6c6b9dca81221940f2d9a65656447f108f9bc2c8d9ae8df319cca83bbd1dad63f53ef2768d9bae
   languageName: node
   linkType: hard
 

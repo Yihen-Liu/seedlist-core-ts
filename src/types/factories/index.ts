@@ -2,3 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Greeter__factory } from "./Greeter__factory";
+export { PrivateVault__factory } from "./PrivateVault__factory";
+export { Saver__factory } from "./Saver__factory";
+export { VaultHub__factory } from "./VaultHub__factory";
