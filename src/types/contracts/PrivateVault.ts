@@ -20,14 +20,14 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "./common";
+} from "../common";
 
 export interface PrivateVaultInterface extends utils.Interface {
   functions: {
     "getLabelByIndex(uint16)": FunctionFragment;
     "getLabelByName(string)": FunctionFragment;
     "minted()": FunctionFragment;
-    "saveWithMinting(string,string)": FunctionFragment;
+    "saveWithMinting(string,string,bool)": FunctionFragment;
     "saveWithoutMinting(string,string)": FunctionFragment;
   };
 
@@ -51,7 +51,7 @@ export interface PrivateVaultInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "minted", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "saveWithMinting",
-    values: [string, string]
+    values: [string, string, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "saveWithoutMinting",
@@ -118,6 +118,7 @@ export interface PrivateVault extends BaseContract {
     saveWithMinting(
       data: string,
       cryptoLabel: string,
+      _minted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -140,6 +141,7 @@ export interface PrivateVault extends BaseContract {
   saveWithMinting(
     data: string,
     cryptoLabel: string,
+    _minted: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -162,6 +164,7 @@ export interface PrivateVault extends BaseContract {
     saveWithMinting(
       data: string,
       cryptoLabel: string,
+      _minted: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -187,6 +190,7 @@ export interface PrivateVault extends BaseContract {
     saveWithMinting(
       data: string,
       cryptoLabel: string,
+      _minted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -213,6 +217,7 @@ export interface PrivateVault extends BaseContract {
     saveWithMinting(
       data: string,
       cryptoLabel: string,
+      _minted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

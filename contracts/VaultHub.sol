@@ -1,75 +1,73 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.4;
+pragma solidity >=0.8.12;
 
+import { PrivateVault } from "./PrivateVault.sol";
+import { ITreasury } from "./interfaces/ITreasury.sol";
 import "hardhat/console.sol";
+import "./interfaces/IVaultHub.sol";
 
-contract PrivateVault {
-    address private signer;
-    address private caller;
-
-    // 每个vault只能参与一次mint seed 行为
-    bool public minted;
-
-    //用来判断某个label是否已经存在
-    mapping(address => bool) private labelExist;
-
-    // 用来标示某个label被存储的位置
-    mapping(uint16 => string) private labels;
-
-    // 用来存储真实的加密数据
-    mapping(address => string) private store;
-
-    uint16 private total;
-
-    modifier auth() {
-        require(msg.sender == caller, "Caller is invalid");
-        _;
-    }
-
-    constructor(address _signer, address _caller) {
-        signer = _signer;
-        caller = _caller;
-        total = 0;
-        minted = false;
-    }
-
-    //cryptoLabel 是加密后的label值
-    function save(string memory data, string memory cryptoLabel, bool _minted) auth external {
-        address labelAddr = address(uint160(uint256(keccak256(abi.encodePacked(cryptoLabel)))));
-        //label没有被使用过
-        require(labelExist[labelAddr] == false, "Label has exist");
-
-        store[labelAddr] = data;
-        labels[total] = cryptoLabel;
-        total++;
-        labelExist[labelAddr] = true;
-
-        if(_minted==true&& minted==false){
-            minted = true;
-        }
-    }
-
-    function getLabelByIndex(uint16 index) auth external view returns (string memory) {
-        require(total > index, "Labels keys overflow");
-        address _addr = address(uint160(uint256(keccak256(abi.encodePacked(labels[index])))));
-        return store[_addr];
-    }
-
-    function getLabelByName(string memory name) auth external view returns (string memory) {
-        address _addr = address(uint160(uint256(keccak256(abi.encodePacked(name)))));
-        require(labelExist[_addr] == true, "Label no exist");
-
-        return store[_addr];
-    }
-}
-
-contract VaultHub {
+contract VaultHub is IVaultHub {
     enum State {
         INIT_SUCCESS,
         SAVE_SUCCESS
     }
     event VaultInit(State indexed result, address indexed signer);
     event Save(State indexed result, address indexed signer);
+
+    address public treasury = address(0);
+
+    string public constant DOMAIN_NAME = "vaulthub@seedlist.org";
+    string public constant DOMAIN_VERSION = "1.0.0";
+    bytes32 public DOMAIN_SEPARATOR;
+
+    // keccak256('EIP712Domain(string name, string version, uint256 chainId, address VaultHubContract)');
+    bytes32 public constant DOMAIN_TYPE_HASH = 0x6c055b4eb43bcfe637041a3adda3d9f2b05d93fc3a54fc8c978e7d0d95e35b66;
+
+    // keccak256('savePrivateDataWithMinting(address addr, string memory data, string memory cryptoLabel,
+    // address receiver, uint deadline)');
+    bytes32 public constant MINT_SAVE_PERMIT_TYPE_HASH =
+        0xc7c597494eec6dbc8ccea152a67ae6a2c377f2c8973e00d770d0d56739bd6de4;
+
+    // keccak256('savePrivateDataWithoutMinting(address addr, string memory data,
+    // string memory cryptoLabel, uint deadline)');
+    bytes32 public constant SAVE_PERMIT_TYPE_HASH = 0xd13e83bcf4fce4727bb85a65a6934ff2f1d0e8c4fd78e9aec10a9ec368be85d0;
+
+    //keccak256('queryPrivateDataByIndex(address addr, uint16 index, uint deadline)')
+    bytes32 public constant INDEX_QUERY_PERMIT_TYPE_HASH =
+        0x823bd930c30b1432beb830612465780ab6dd71a4e3fa2bfff20271dc3753be81;
+
+    //keccak256('queryPrivateDataByName(address addr, string memory label, uint deadline)')
+    bytes32 public constant NAME_QUERY_PERMIT_TYPE_HASH =
+        0xe024d3867535747968844166b70261c903bc195d9c853ac1546b35d14d6bddb6;
+
+    //keccak256('initPrivateVault(address addr, uint deadline)')
+    bytes32 public constant INIT_VAULT_TYPE_HASH = 0xa57c24b72b0018db8ef11f3c9cffba3de9a9cf6331cd5f147e4331469bf522d7;
+
+    constructor() {
+        uint256 chainId;
+        assembly {
+            chainId := chainid()
+        }
+        DOMAIN_SEPARATOR = keccak256(
+            abi.encode(
+                DOMAIN_TYPE_HASH,
+                keccak256(bytes(DOMAIN_NAME)),
+                keccak256(bytes(DOMAIN_VERSION)),
+                chainId,
+                address(this)
+            )
+        );
+    }
+
+    function setTreasuryAddress(address _treasury) external {
+        require(treasury == address(0), "seedlist: treasury has set");
+        treasury = _treasury;
+    }
+
+    modifier treasuryValid() {
+        require(treasury != address(0));
+        _;
+    }
 
     function calculateVaultAddress(bytes32 salt, bytes memory bytecode) internal view returns (address) {
         return
@@ -84,28 +82,38 @@ contract VaultHub {
             );
     }
 
+    function initPermit(
+        address addr,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) internal view {
+        require(addr != address(0), "seedlist: caller address ZERO");
+        require(deadline >= block.timestamp, "seedlist: execute timeout");
+        bytes32 params = keccak256(abi.encodePacked(addr, deadline, DOMAIN_SEPARATOR, INIT_VAULT_TYPE_HASH));
+        bytes32 paramsHash = keccak256(abi.encodePacked(params));
+        bytes32 digest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", paramsHash));
+
+        //3. 判断ecrecover的结果地址是否和addr等值; 如果否，直接revert
+        require(ecrecover(digest, v, r, s) == addr, "seedlist: init permit signature ERROR");
+    }
+
     function initPrivateVault(
         address addr,
+        uint256 deadline,
         uint8 v,
         bytes32 r,
         bytes32 s
     ) external returns (bool) {
-        //1. 计算 addr的hash 计为addrHash
-        bytes32 addrHash = keccak256(abi.encodePacked(addr));
-        //2. 计算数字hash
-        bytes32 messageDigest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", addrHash));
-
-        //3. 判断ecrecover的结果地址是否和addr等值; 如果否，直接revert
-        require(ecrecover(messageDigest, v, r, s) == addr, "Signature date ERROR");
-
+        initPermit(addr, deadline, v, r, s);
         //4. 计算private vault的地址, 记为vaultAddr
         bytes32 salt = keccak256(abi.encodePacked(addr));
         bytes memory bytecode = abi.encodePacked(type(PrivateVault).creationCode, abi.encode(addr, this));
 
         address vaultAddr = calculateVaultAddress(salt, bytecode);
-        console.log("calculate addr:", vaultAddr);
         //5. 判断vaultAddr没有合约存在，若存在则直接返回；
-        require(vaultAddr.code.length == 0, "Vault contract has been deployed");
+        require(vaultAddr.code.length == 0, "seedlist: vault contract has been deployed");
 
         //6. create2 部署合约
         address vault;
@@ -115,7 +123,7 @@ contract VaultHub {
 
         if (vault == address(0)) {
             //合约create2失败
-            revert("Create2 private vault ERROR");
+            revert("seedlist: create2 private vault ERROR");
         }
 
         emit VaultInit(State.INIT_SUCCESS, addr);
@@ -123,12 +131,48 @@ contract VaultHub {
         return true;
     }
 
-    function savePrivateData(
+    function mintSavePermit(
         address addr,
         string memory data,
         string memory cryptoLabel,
-        bool minted
-    ) external {
+        address receiver,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) internal view {
+        require(addr != address(0), "seedlist: caller address ZERO");
+        require(deadline >= block.timestamp, "seedlist: execute timeout");
+        bytes32 params = keccak256(
+            abi.encodePacked(
+                addr,
+                bytes(data),
+                bytes(cryptoLabel),
+                receiver,
+                deadline,
+                DOMAIN_SEPARATOR,
+                MINT_SAVE_PERMIT_TYPE_HASH
+            )
+        );
+        bytes32 paramsHash = keccak256(abi.encodePacked(params));
+        bytes32 digest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", paramsHash));
+
+        //3. 判断ecrecover的结果地址是否和addr等值; 如果否，直接revert
+        require(ecrecover(digest, v, r, s) == addr, "seedlist: mint save permit signature ERROR");
+    }
+
+    function savePrivateDataWithMinting(
+        address addr,
+        string memory data,
+        string memory cryptoLabel,
+        address receiver,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external treasuryValid {
+        mintSavePermit(addr, data, cryptoLabel, receiver, deadline, v, r, s);
+
         bytes32 salt = keccak256(abi.encodePacked(addr));
         bytes memory bytecode = abi.encodePacked(type(PrivateVault).creationCode, abi.encode(addr, this));
 
@@ -137,56 +181,140 @@ contract VaultHub {
         // 判断合约类型有效
         require(
             vault.code.length > 0 && vault.codehash == keccak256(abi.encodePacked(type(PrivateVault).runtimeCode)),
-            "Deploy vault contract firstly"
+            "seedlist: deploy vault contract firstly"
         );
-        if(minted==true && PrivateVault(vault).minted()==false){
-            console.log("minted SEED token success.");
-        }
-        PrivateVault(vault).save(data, cryptoLabel, minted);
+
+        require(PrivateVault(vault).minted()==false, "seedlist: mint token has done");
+
+        ITreasury(treasury).mint(receiver);
+
+        PrivateVault(vault).saveWithMinting(data, cryptoLabel);
         emit Save(State.SAVE_SUCCESS, addr);
     }
 
-    function canIndexRead( address addr, uint16 index, uint256 height, uint8 v, bytes32 r, bytes32 s) internal view returns(bool){
-        require(block.number==height || block.number==height+1, "Height is invalid");
+    function savePermit(
+        address addr,
+        string memory data,
+        string memory cryptoLabel,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) internal view {
+        require(addr != address(0), "seedlist: caller address ZERO");
+        require(deadline >= block.timestamp, "seedlist: execute timeout");
+        bytes32 params = keccak256(
+            abi.encodePacked(addr, bytes(data), bytes(cryptoLabel), deadline, DOMAIN_SEPARATOR, SAVE_PERMIT_TYPE_HASH)
+        );
+        bytes32 paramsHash = keccak256(abi.encodePacked(params));
+        bytes32 digest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", paramsHash));
 
-        bytes32 paramsHash = keccak256(abi.encodePacked(addr, index, blockhash(height)));
-        bytes32 messageDigest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", paramsHash));
-        require(ecrecover(messageDigest, v, r, s) == addr, "Read signature date ERROR");
-
-        return true;
+        //3. 判断ecrecover的结果地址是否和addr等值; 如果否，直接revert
+        require(ecrecover(digest, v, r, s) == addr, "seedlist: save permit signature ERROR");
     }
 
-    function canNameRead( address addr, string memory label, uint256 height, uint8 v, bytes32 r, bytes32 s) internal view returns(bool) {
-        require(block.number==height || block.number==height+1, "Height is invalid");
+    function savePrivateDataWithoutMinting(
+        address addr,
+        string memory data,
+        string memory cryptoLabel,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
+        savePermit(addr, data, cryptoLabel, deadline, v, r, s);
+        bytes32 salt = keccak256(abi.encodePacked(addr));
+        bytes memory bytecode = abi.encodePacked(type(PrivateVault).creationCode, abi.encode(addr, this));
 
-        bytes32 paramsHash = keccak256(abi.encodePacked(addr, label, blockhash(height)));
-        bytes32 messageDigest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", paramsHash));
-        require(ecrecover(messageDigest, v, r, s) == addr, "Read signature date ERROR");
+        address vault = calculateVaultAddress(salt, bytecode);
 
-        return true;
+        // 判断合约类型有效
+        require(
+            vault.code.length > 0 && vault.codehash == keccak256(abi.encodePacked(type(PrivateVault).runtimeCode)),
+            "seedlist: deploy vault contract firstly"
+        );
+        PrivateVault(vault).saveWithoutMinting(data, cryptoLabel);
+        emit Save(State.SAVE_SUCCESS, addr);
     }
 
-    function queryPrivateDataByIndex(address addr, uint16 index) external view returns (string memory) {
+    function queryByIndexPermit(
+        address addr,
+        uint16 index,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) internal view {
+        require(addr != address(0), "seedlist: caller address ZERO");
+        require(deadline >= block.timestamp, "seedlist: execute timeout");
+        bytes32 params = keccak256(
+            abi.encodePacked(addr, index, deadline, DOMAIN_SEPARATOR, INDEX_QUERY_PERMIT_TYPE_HASH)
+        );
+        bytes32 paramsHash = keccak256(abi.encodePacked(params));
+        bytes32 digest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", paramsHash));
+
+        //3. 判断ecrecover的结果地址是否和addr等值; 如果否，直接revert
+        require(ecrecover(digest, v, r, s) == addr, "seedlist: index query permit signature ERROR");
+    }
+
+    function queryPrivateDataByIndex(
+        address addr,
+        uint16 index,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external view returns (string memory) {
+        queryByIndexPermit(addr, index, deadline, v, r, s);
         bytes32 salt = keccak256(abi.encodePacked(addr));
         bytes memory bytecode = abi.encodePacked(type(PrivateVault).creationCode, abi.encode(addr, this));
 
         address vault = calculateVaultAddress(salt, bytecode);
         require(
             vault.code.length > 0 && vault.codehash == keccak256(abi.encodePacked(type(PrivateVault).runtimeCode)),
-            "Deploy vault contract firstly"
+            "seedlist: deploy vault contract firstly"
         );
 
         return PrivateVault(vault).getLabelByIndex(index);
     }
 
-    function queryPrivateDataByName(address addr, string memory label) external view returns (string memory) {
+    function queryByNamePermit(
+        address addr,
+        string memory labelName,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) internal view {
+        require(addr != address(0), "seedlist: caller address ZERO");
+        require(deadline >= block.timestamp, "seedlist: execute timeout");
+        bytes32 params = keccak256(
+            abi.encodePacked(addr, bytes(labelName), deadline, DOMAIN_SEPARATOR, NAME_QUERY_PERMIT_TYPE_HASH)
+        );
+        bytes32 paramsHash = keccak256(abi.encodePacked(params));
+        bytes32 digest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", paramsHash));
+
+        //3. 判断ecrecover的结果地址是否和addr等值; 如果否，直接revert
+        require(ecrecover(digest, v, r, s) == addr, "seedlist: name query permit signature ERROR");
+    }
+
+    function queryPrivateDataByName(
+        address addr,
+        string memory label,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external view returns (string memory) {
+        queryByNamePermit(addr, label, deadline, v, r, s);
+
         bytes32 salt = keccak256(abi.encodePacked(addr));
         bytes memory bytecode = abi.encodePacked(type(PrivateVault).creationCode, abi.encode(addr, this));
 
         address vault = calculateVaultAddress(salt, bytecode);
         require(
             vault.code.length > 0 && vault.codehash == keccak256(abi.encodePacked(type(PrivateVault).runtimeCode)),
-            "Deploy vault contract firstly"
+            "seedlist: deploy vault contract firstly"
         );
 
         return PrivateVault(vault).getLabelByName(label);
