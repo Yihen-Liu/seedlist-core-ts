@@ -23,14 +23,14 @@ import type {
 
 export interface ITreasuryInterface extends utils.Interface {
   functions: {
-    "Mint(address)": FunctionFragment;
+    "mint(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "Mint"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "mint"): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "Mint", values: [string]): string;
+  encodeFunctionData(functionFragment: "mint", values: [string]): string;
 
-  decodeFunctionResult(functionFragment: "Mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
 
   events: {};
 }
@@ -62,32 +62,32 @@ export interface ITreasury extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    Mint(
+    mint(
       receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  Mint(
+  mint(
     receiver: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    Mint(receiver: string, overrides?: CallOverrides): Promise<boolean>;
+    mint(receiver: string, overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
-    Mint(
+    mint(
       receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    Mint(
+    mint(
       receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

@@ -3,6 +3,8 @@
 pragma solidity >=0.8.12;
 
 interface IVaultHub {
+    function vaultHasRegister(address addr) external view returns (bool);
+
     function initPrivateVault(
         address addr,
         uint256 deadline,
@@ -49,4 +51,20 @@ interface IVaultHub {
         bytes32 r,
         bytes32 s
     ) external view returns (string memory);
+
+    function hasMinted(
+        address addr,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external view returns (bool);
+
+    function totalSavedItems(
+        address addr,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external view returns (uint64);
 }

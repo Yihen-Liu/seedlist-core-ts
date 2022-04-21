@@ -15,7 +15,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "Mint",
+    name: "mint",
     outputs: [
       {
         internalType: "bool",

@@ -28,6 +28,7 @@ import type {
 
 export interface VaultHubInterface extends utils.Interface {
   functions: {
+    "BASE_PERMIT_TYPE_HASH()": FunctionFragment;
     "DOMAIN_NAME()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "DOMAIN_TYPE_HASH()": FunctionFragment;
@@ -37,17 +38,22 @@ export interface VaultHubInterface extends utils.Interface {
     "MINT_SAVE_PERMIT_TYPE_HASH()": FunctionFragment;
     "NAME_QUERY_PERMIT_TYPE_HASH()": FunctionFragment;
     "SAVE_PERMIT_TYPE_HASH()": FunctionFragment;
+    "hasMinted(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "initPrivateVault(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "owner()": FunctionFragment;
     "queryPrivateDataByIndex(address,uint16,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "queryPrivateDataByName(address,string,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "savePrivateDataWithMinting(address,string,string,address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "savePrivateDataWithoutMinting(address,string,string,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "setTreasuryAddress(address)": FunctionFragment;
+    "totalSavedItems(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "treasury()": FunctionFragment;
+    "vaultHasRegister(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "BASE_PERMIT_TYPE_HASH"
       | "DOMAIN_NAME"
       | "DOMAIN_SEPARATOR"
       | "DOMAIN_TYPE_HASH"
@@ -57,15 +63,23 @@ export interface VaultHubInterface extends utils.Interface {
       | "MINT_SAVE_PERMIT_TYPE_HASH"
       | "NAME_QUERY_PERMIT_TYPE_HASH"
       | "SAVE_PERMIT_TYPE_HASH"
+      | "hasMinted"
       | "initPrivateVault"
+      | "owner"
       | "queryPrivateDataByIndex"
       | "queryPrivateDataByName"
       | "savePrivateDataWithMinting"
       | "savePrivateDataWithoutMinting"
       | "setTreasuryAddress"
+      | "totalSavedItems"
       | "treasury"
+      | "vaultHasRegister"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "BASE_PERMIT_TYPE_HASH",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "DOMAIN_NAME",
     values?: undefined
@@ -103,9 +117,14 @@ export interface VaultHubInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "hasMinted",
+    values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "initPrivateVault",
     values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "queryPrivateDataByIndex",
     values: [
@@ -150,8 +169,20 @@ export interface VaultHubInterface extends utils.Interface {
     functionFragment: "setTreasuryAddress",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "totalSavedItems",
+    values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "treasury", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "vaultHasRegister",
+    values: [string]
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "BASE_PERMIT_TYPE_HASH",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "DOMAIN_NAME",
     data: BytesLike
@@ -188,10 +219,12 @@ export interface VaultHubInterface extends utils.Interface {
     functionFragment: "SAVE_PERMIT_TYPE_HASH",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "hasMinted", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initPrivateVault",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "queryPrivateDataByIndex",
     data: BytesLike
@@ -212,7 +245,15 @@ export interface VaultHubInterface extends utils.Interface {
     functionFragment: "setTreasuryAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSavedItems",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "treasury", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "vaultHasRegister",
+    data: BytesLike
+  ): Result;
 
   events: {
     "Save(uint8,address)": EventFragment;
@@ -266,6 +307,8 @@ export interface VaultHub extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    BASE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
+
     DOMAIN_NAME(overrides?: CallOverrides): Promise<[string]>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
@@ -284,6 +327,15 @@ export interface VaultHub extends BaseContract {
 
     SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
 
+    hasMinted(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     initPrivateVault(
       addr: string,
       deadline: BigNumberish,
@@ -292,6 +344,8 @@ export interface VaultHub extends BaseContract {
       s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
     queryPrivateDataByIndex(
       addr: string,
@@ -341,8 +395,24 @@ export interface VaultHub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    totalSavedItems(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     treasury(overrides?: CallOverrides): Promise<[string]>;
+
+    vaultHasRegister(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
+
+  BASE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
   DOMAIN_NAME(overrides?: CallOverrides): Promise<string>;
 
@@ -362,6 +432,15 @@ export interface VaultHub extends BaseContract {
 
   SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
+  hasMinted(
+    addr: string,
+    deadline: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   initPrivateVault(
     addr: string,
     deadline: BigNumberish,
@@ -370,6 +449,8 @@ export interface VaultHub extends BaseContract {
     s: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
 
   queryPrivateDataByIndex(
     addr: string,
@@ -419,9 +500,22 @@ export interface VaultHub extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  totalSavedItems(
+    addr: string,
+    deadline: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   treasury(overrides?: CallOverrides): Promise<string>;
 
+  vaultHasRegister(addr: string, overrides?: CallOverrides): Promise<boolean>;
+
   callStatic: {
+    BASE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
     DOMAIN_NAME(overrides?: CallOverrides): Promise<string>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
@@ -440,6 +534,15 @@ export interface VaultHub extends BaseContract {
 
     SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
+    hasMinted(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     initPrivateVault(
       addr: string,
       deadline: BigNumberish,
@@ -448,6 +551,8 @@ export interface VaultHub extends BaseContract {
       s: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
 
     queryPrivateDataByIndex(
       addr: string,
@@ -497,7 +602,18 @@ export interface VaultHub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    totalSavedItems(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     treasury(overrides?: CallOverrides): Promise<string>;
+
+    vaultHasRegister(addr: string, overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {
@@ -518,6 +634,8 @@ export interface VaultHub extends BaseContract {
   };
 
   estimateGas: {
+    BASE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
     DOMAIN_NAME(overrides?: CallOverrides): Promise<BigNumber>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -536,6 +654,15 @@ export interface VaultHub extends BaseContract {
 
     SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
 
+    hasMinted(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initPrivateVault(
       addr: string,
       deadline: BigNumberish,
@@ -544,6 +671,8 @@ export interface VaultHub extends BaseContract {
       s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     queryPrivateDataByIndex(
       addr: string,
@@ -593,10 +722,28 @@ export interface VaultHub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    totalSavedItems(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     treasury(overrides?: CallOverrides): Promise<BigNumber>;
+
+    vaultHasRegister(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    BASE_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     DOMAIN_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -625,6 +772,15 @@ export interface VaultHub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    hasMinted(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     initPrivateVault(
       addr: string,
       deadline: BigNumberish,
@@ -633,6 +789,8 @@ export interface VaultHub extends BaseContract {
       s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     queryPrivateDataByIndex(
       addr: string,
@@ -682,6 +840,20 @@ export interface VaultHub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    totalSavedItems(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     treasury(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    vaultHasRegister(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

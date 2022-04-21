@@ -24,22 +24,32 @@ import type {
 
 export interface IVaultHubInterface extends utils.Interface {
   functions: {
+    "hasMinted(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "initPrivateVault(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "queryPrivateDataByIndex(address,uint16,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "queryPrivateDataByName(address,string,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "savePrivateDataWithMinting(address,string,string,address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "savePrivateDataWithoutMinting(address,string,string,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "totalSavedItems(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "vaultHasRegister(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "hasMinted"
       | "initPrivateVault"
       | "queryPrivateDataByIndex"
       | "queryPrivateDataByName"
       | "savePrivateDataWithMinting"
       | "savePrivateDataWithoutMinting"
+      | "totalSavedItems"
+      | "vaultHasRegister"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "hasMinted",
+    values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "initPrivateVault",
     values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
@@ -84,7 +94,16 @@ export interface IVaultHubInterface extends utils.Interface {
       BytesLike
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "totalSavedItems",
+    values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "vaultHasRegister",
+    values: [string]
+  ): string;
 
+  decodeFunctionResult(functionFragment: "hasMinted", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initPrivateVault",
     data: BytesLike
@@ -103,6 +122,14 @@ export interface IVaultHubInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "savePrivateDataWithoutMinting",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSavedItems",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "vaultHasRegister",
     data: BytesLike
   ): Result;
 
@@ -136,6 +163,15 @@ export interface IVaultHub extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    hasMinted(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     initPrivateVault(
       addr: string,
       deadline: BigNumberish,
@@ -187,7 +223,30 @@ export interface IVaultHub extends BaseContract {
       s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    totalSavedItems(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    vaultHasRegister(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
+
+  hasMinted(
+    addr: string,
+    deadline: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   initPrivateVault(
     addr: string,
@@ -241,7 +300,27 @@ export interface IVaultHub extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  totalSavedItems(
+    addr: string,
+    deadline: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  vaultHasRegister(addr: string, overrides?: CallOverrides): Promise<boolean>;
+
   callStatic: {
+    hasMinted(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     initPrivateVault(
       addr: string,
       deadline: BigNumberish,
@@ -293,11 +372,31 @@ export interface IVaultHub extends BaseContract {
       s: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    totalSavedItems(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    vaultHasRegister(addr: string, overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
+    hasMinted(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initPrivateVault(
       addr: string,
       deadline: BigNumberish,
@@ -348,10 +447,33 @@ export interface IVaultHub extends BaseContract {
       r: BytesLike,
       s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    totalSavedItems(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    vaultHasRegister(
+      addr: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    hasMinted(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     initPrivateVault(
       addr: string,
       deadline: BigNumberish,
@@ -402,6 +524,20 @@ export interface IVaultHub extends BaseContract {
       r: BytesLike,
       s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    totalSavedItems(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    vaultHasRegister(
+      addr: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

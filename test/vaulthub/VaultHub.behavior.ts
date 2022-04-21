@@ -6,8 +6,52 @@ import { ethers } from "ethers";
 
 import { GenBitcoinBrainWallet, GenEthereumBrainWallet } from "../../../seedlist-interface-ts/src/lib/brainwallet";
 
+function calculateSolidityPermitHash() {
+  console.log("base-permit:", ethers.utils.solidityKeccak256(["string"], ["permit(uint deadline)"]));
+  console.log(
+    "save-permit:",
+    ethers.utils.solidityKeccak256(
+      ["string"],
+      ["savePrivateDataWithoutMinting(address addr, string memory data, string memory cryptoLabel, uint deadline)"],
+    ),
+  );
+  console.log(
+    "mint-save-permit:",
+    ethers.utils.solidityKeccak256(
+      ["string"],
+      [
+        "savePrivateDataWithMinting(address addr, string memory data, string memory cryptoLabel, address receiver, uint deadline)",
+      ],
+    ),
+  );
+  console.log(
+    "index-query-permit:",
+    ethers.utils.solidityKeccak256(["string"], ["queryPrivateDataByIndex(address addr, uint16 index, uint deadline)"]),
+  );
+  console.log(
+    "name-query-permit:",
+    ethers.utils.solidityKeccak256(
+      ["string"],
+      ["queryPrivateDataByName(address addr, string memory label, uint deadline)"],
+    ),
+  );
+  console.log(
+    "init-vault-permit:",
+    ethers.utils.solidityKeccak256(["string"], ["initPrivateVault(address addr, uint deadline)"]),
+  );
+  console.log(
+    "domain:",
+    ethers.utils.solidityKeccak256(
+      ["string"],
+      ["EIP712Domain(string name, string version, uint256 chainId, address VaultHubContract)"],
+    ),
+  );
+}
+
 export function shouldBehaveLikeVaultHub(): void {
   it("should return the new private vault", async function () {
+    calculateSolidityPermitHash();
+    return;
     let wallets = GenEthereumBrainWallet(0, 10, "Hello world");
     console.log("node.privateKey:", wallets.privkeys[0]);
     //ethers.utils.
@@ -108,47 +152,5 @@ export function shouldBehaveLikeVaultHub(): void {
       signature2.s,
     );
     console.log("query by label2:", val2);
-
-    console.log(
-      "save-permit:",
-      ethers.utils.solidityKeccak256(
-        ["string"],
-        ["savePrivateDataWithoutMinting(address addr, string memory data, string memory cryptoLabel, uint deadline)"],
-      ),
-    );
-    console.log(
-      "mint-save-permit:",
-      ethers.utils.solidityKeccak256(
-        ["string"],
-        [
-          "savePrivateDataWithMinting(address addr, string memory data, string memory cryptoLabel, address receiver, uint deadline)",
-        ],
-      ),
-    );
-    console.log(
-      "index-query-permit:",
-      ethers.utils.solidityKeccak256(
-        ["string"],
-        ["queryPrivateDataByIndex(address addr, uint16 index, uint deadline)"],
-      ),
-    );
-    console.log(
-      "name-query-permit:",
-      ethers.utils.solidityKeccak256(
-        ["string"],
-        ["queryPrivateDataByName(address addr, string memory label, uint deadline)"],
-      ),
-    );
-    console.log(
-      "init-vault-permit:",
-      ethers.utils.solidityKeccak256(["string"], ["initPrivateVault(address addr, uint deadline)"]),
-    );
-    console.log(
-      "domain:",
-      ethers.utils.solidityKeccak256(
-        ["string"],
-        ["EIP712Domain(string name, string version, uint256 chainId, address VaultHubContract)"],
-      ),
-    );
   });
 }

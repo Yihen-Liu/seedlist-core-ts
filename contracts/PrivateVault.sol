@@ -14,12 +14,12 @@ contract PrivateVault {
     mapping(address => bool) private labelExist;
 
     // 用来标示某个label被存储的位置
-    mapping(uint16 => string) private labels;
+    mapping(uint64 => string) private labels;
 
     // 用来存储真实的加密数据
     mapping(address => string) private store;
 
-    uint16 private total;
+    uint64 public total;
 
     modifier auth() {
         require(msg.sender == caller || msg.sender == signer, "Caller is invalid");

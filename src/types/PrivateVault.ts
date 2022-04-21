@@ -29,6 +29,7 @@ export interface PrivateVaultInterface extends utils.Interface {
     "minted()": FunctionFragment;
     "saveWithMinting(string,string)": FunctionFragment;
     "saveWithoutMinting(string,string)": FunctionFragment;
+    "total()": FunctionFragment;
   };
 
   getFunction(
@@ -38,6 +39,7 @@ export interface PrivateVaultInterface extends utils.Interface {
       | "minted"
       | "saveWithMinting"
       | "saveWithoutMinting"
+      | "total"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -57,6 +59,7 @@ export interface PrivateVaultInterface extends utils.Interface {
     functionFragment: "saveWithoutMinting",
     values: [string, string]
   ): string;
+  encodeFunctionData(functionFragment: "total", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "getLabelByIndex",
@@ -75,6 +78,7 @@ export interface PrivateVaultInterface extends utils.Interface {
     functionFragment: "saveWithoutMinting",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "total", data: BytesLike): Result;
 
   events: {};
 }
@@ -126,6 +130,8 @@ export interface PrivateVault extends BaseContract {
       cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    total(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   getLabelByIndex(
@@ -149,6 +155,8 @@ export interface PrivateVault extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  total(overrides?: CallOverrides): Promise<BigNumber>;
+
   callStatic: {
     getLabelByIndex(
       index: BigNumberish,
@@ -170,6 +178,8 @@ export interface PrivateVault extends BaseContract {
       cryptoLabel: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    total(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
@@ -195,6 +205,8 @@ export interface PrivateVault extends BaseContract {
       cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    total(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -221,5 +233,7 @@ export interface PrivateVault extends BaseContract {
       cryptoLabel: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    total(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }
