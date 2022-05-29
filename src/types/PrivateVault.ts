@@ -24,8 +24,9 @@ import type {
 
 export interface PrivateVaultInterface extends utils.Interface {
   functions: {
-    "getLabelByIndex(uint16)": FunctionFragment;
+    "getLabelByIndex(uint64)": FunctionFragment;
     "getLabelByName(string)": FunctionFragment;
+    "labelName(uint64)": FunctionFragment;
     "minted()": FunctionFragment;
     "saveWithMinting(string,string)": FunctionFragment;
     "saveWithoutMinting(string,string)": FunctionFragment;
@@ -36,6 +37,7 @@ export interface PrivateVaultInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "getLabelByIndex"
       | "getLabelByName"
+      | "labelName"
       | "minted"
       | "saveWithMinting"
       | "saveWithoutMinting"
@@ -49,6 +51,10 @@ export interface PrivateVaultInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getLabelByName",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "labelName",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "minted", values?: undefined): string;
   encodeFunctionData(
@@ -69,6 +75,7 @@ export interface PrivateVaultInterface extends utils.Interface {
     functionFragment: "getLabelByName",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "labelName", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "minted", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "saveWithMinting",
@@ -117,6 +124,11 @@ export interface PrivateVault extends BaseContract {
 
     getLabelByName(name: string, overrides?: CallOverrides): Promise<[string]>;
 
+    labelName(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     minted(overrides?: CallOverrides): Promise<[boolean]>;
 
     saveWithMinting(
@@ -141,6 +153,8 @@ export interface PrivateVault extends BaseContract {
 
   getLabelByName(name: string, overrides?: CallOverrides): Promise<string>;
 
+  labelName(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
   minted(overrides?: CallOverrides): Promise<boolean>;
 
   saveWithMinting(
@@ -164,6 +178,8 @@ export interface PrivateVault extends BaseContract {
     ): Promise<string>;
 
     getLabelByName(name: string, overrides?: CallOverrides): Promise<string>;
+
+    labelName(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     minted(overrides?: CallOverrides): Promise<boolean>;
 
@@ -192,6 +208,11 @@ export interface PrivateVault extends BaseContract {
 
     getLabelByName(name: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    labelName(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     minted(overrides?: CallOverrides): Promise<BigNumber>;
 
     saveWithMinting(
@@ -217,6 +238,11 @@ export interface PrivateVault extends BaseContract {
 
     getLabelByName(
       name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    labelName(
+      index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

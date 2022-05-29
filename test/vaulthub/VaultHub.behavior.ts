@@ -4,10 +4,13 @@ import { entropyToMnemonic, mnemonicToSeedSync } from "bip39";
 import { expect } from "chai";
 import { ethers } from "ethers";
 
-import { GenBitcoinBrainWallet, GenEthereumBrainWallet } from "../../../seedlist-interface-ts/src/lib/brainwallet";
+import { GenBitcoinBrainWalletByPuzzle, GenEthereumBrainWalletByPuzzle } from "../../../seedlist-interface-ts/src/lib/brainwallet";
 
 function calculateSolidityPermitHash() {
-  console.log("base-permit:", ethers.utils.solidityKeccak256(["string"], ["permit(uint deadline)"]));
+  console.log("has-register-permit:", ethers.utils.solidityKeccak256(["string"], ["vaultHasRegister(address addr, uint deadline)"]));
+  console.log("has-minted-permit:", ethers.utils.solidityKeccak256(["string"], ["hasMinted(address addr, uint deadline)"]));
+  console.log("total-items-permit:", ethers.utils.solidityKeccak256(["string"], ["totalSavedItems(address addr, uint deadline)"]));
+  console.log("get label name by index:", ethers.utils.solidityKeccak256(["string"],["getLabelNameByIndex(address addr, uint256 deadline, uint64 index)"]))
   console.log(
     "save-permit:",
     ethers.utils.solidityKeccak256(
@@ -26,7 +29,7 @@ function calculateSolidityPermitHash() {
   );
   console.log(
     "index-query-permit:",
-    ethers.utils.solidityKeccak256(["string"], ["queryPrivateDataByIndex(address addr, uint16 index, uint deadline)"]),
+    ethers.utils.solidityKeccak256(["string"], ["queryPrivateDataByIndex(address addr, uint64 index, uint deadline)"]),
   );
   console.log(
     "name-query-permit:",
@@ -51,9 +54,9 @@ function calculateSolidityPermitHash() {
 export function shouldBehaveLikeVaultHub(): void {
   it("should return the new private vault", async function () {
     calculateSolidityPermitHash();
-    return;
-    let wallets = GenEthereumBrainWallet(0, 10, "Hello world");
+    let wallets = GenBitcoinBrainWalletByPuzzle(0, 10, "Hello world");
     console.log("node.privateKey:", wallets.privkeys[0]);
+    return;
     //ethers.utils.
     let privateKey = wallets.privkeys[0];
     let wallet = new ethers.Wallet(privateKey);

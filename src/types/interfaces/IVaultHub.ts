@@ -24,18 +24,20 @@ import type {
 
 export interface IVaultHubInterface extends utils.Interface {
   functions: {
+    "getLabelNameByIndex(address,uint256,uint64,uint8,bytes32,bytes32)": FunctionFragment;
     "hasMinted(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "initPrivateVault(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "queryPrivateDataByIndex(address,uint16,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "queryPrivateDataByIndex(address,uint64,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "queryPrivateDataByName(address,string,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "savePrivateDataWithMinting(address,string,string,address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "savePrivateDataWithoutMinting(address,string,string,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "totalSavedItems(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "vaultHasRegister(address)": FunctionFragment;
+    "vaultHasRegister(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getLabelNameByIndex"
       | "hasMinted"
       | "initPrivateVault"
       | "queryPrivateDataByIndex"
@@ -46,6 +48,17 @@ export interface IVaultHubInterface extends utils.Interface {
       | "vaultHasRegister"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getLabelNameByIndex",
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "hasMinted",
     values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
@@ -100,9 +113,13 @@ export interface IVaultHubInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "vaultHasRegister",
-    values: [string]
+    values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getLabelNameByIndex",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "hasMinted", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initPrivateVault",
@@ -163,6 +180,16 @@ export interface IVaultHub extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getLabelNameByIndex(
+      addr: string,
+      deadline: BigNumberish,
+      index: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     hasMinted(
       addr: string,
       deadline: BigNumberish,
@@ -235,9 +262,23 @@ export interface IVaultHub extends BaseContract {
 
     vaultHasRegister(
       addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
+
+  getLabelNameByIndex(
+    addr: string,
+    deadline: BigNumberish,
+    index: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   hasMinted(
     addr: string,
@@ -309,9 +350,26 @@ export interface IVaultHub extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  vaultHasRegister(addr: string, overrides?: CallOverrides): Promise<boolean>;
+  vaultHasRegister(
+    addr: string,
+    deadline: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
+    getLabelNameByIndex(
+      addr: string,
+      deadline: BigNumberish,
+      index: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     hasMinted(
       addr: string,
       deadline: BigNumberish,
@@ -382,12 +440,29 @@ export interface IVaultHub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    vaultHasRegister(addr: string, overrides?: CallOverrides): Promise<boolean>;
+    vaultHasRegister(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
+    getLabelNameByIndex(
+      addr: string,
+      deadline: BigNumberish,
+      index: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasMinted(
       addr: string,
       deadline: BigNumberish,
@@ -460,11 +535,25 @@ export interface IVaultHub extends BaseContract {
 
     vaultHasRegister(
       addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    getLabelNameByIndex(
+      addr: string,
+      deadline: BigNumberish,
+      index: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     hasMinted(
       addr: string,
       deadline: BigNumberish,
@@ -537,6 +626,10 @@ export interface IVaultHub extends BaseContract {
 
     vaultHasRegister(
       addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

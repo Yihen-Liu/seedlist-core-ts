@@ -28,41 +28,49 @@ import type {
 
 export interface VaultHubInterface extends utils.Interface {
   functions: {
-    "BASE_PERMIT_TYPE_HASH()": FunctionFragment;
     "DOMAIN_NAME()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "DOMAIN_TYPE_HASH()": FunctionFragment;
     "DOMAIN_VERSION()": FunctionFragment;
+    "GET_LABEL_NAME_BY_INDEX()": FunctionFragment;
+    "HAS_MINTED_PERMIT_TYPE_HASH()": FunctionFragment;
     "INDEX_QUERY_PERMIT_TYPE_HASH()": FunctionFragment;
-    "INIT_VAULT_TYPE_HASH()": FunctionFragment;
+    "INIT_VAULT_PERMIT_TYPE_HASH()": FunctionFragment;
     "MINT_SAVE_PERMIT_TYPE_HASH()": FunctionFragment;
     "NAME_QUERY_PERMIT_TYPE_HASH()": FunctionFragment;
     "SAVE_PERMIT_TYPE_HASH()": FunctionFragment;
+    "TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH()": FunctionFragment;
+    "VAULT_HAS_REGISTER_PERMIT_TYPE_HASH()": FunctionFragment;
+    "getLabelNameByIndex(address,uint256,uint64,uint8,bytes32,bytes32)": FunctionFragment;
     "hasMinted(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "initPrivateVault(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "owner()": FunctionFragment;
-    "queryPrivateDataByIndex(address,uint16,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "queryPrivateDataByIndex(address,uint64,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "queryPrivateDataByName(address,string,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "savePrivateDataWithMinting(address,string,string,address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "savePrivateDataWithoutMinting(address,string,string,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "setTreasuryAddress(address)": FunctionFragment;
     "totalSavedItems(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "treasury()": FunctionFragment;
-    "vaultHasRegister(address)": FunctionFragment;
+    "vaultHasRegister(address,uint256,uint8,bytes32,bytes32)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "BASE_PERMIT_TYPE_HASH"
       | "DOMAIN_NAME"
       | "DOMAIN_SEPARATOR"
       | "DOMAIN_TYPE_HASH"
       | "DOMAIN_VERSION"
+      | "GET_LABEL_NAME_BY_INDEX"
+      | "HAS_MINTED_PERMIT_TYPE_HASH"
       | "INDEX_QUERY_PERMIT_TYPE_HASH"
-      | "INIT_VAULT_TYPE_HASH"
+      | "INIT_VAULT_PERMIT_TYPE_HASH"
       | "MINT_SAVE_PERMIT_TYPE_HASH"
       | "NAME_QUERY_PERMIT_TYPE_HASH"
       | "SAVE_PERMIT_TYPE_HASH"
+      | "TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH"
+      | "VAULT_HAS_REGISTER_PERMIT_TYPE_HASH"
+      | "getLabelNameByIndex"
       | "hasMinted"
       | "initPrivateVault"
       | "owner"
@@ -76,10 +84,6 @@ export interface VaultHubInterface extends utils.Interface {
       | "vaultHasRegister"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "BASE_PERMIT_TYPE_HASH",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "DOMAIN_NAME",
     values?: undefined
@@ -97,11 +101,19 @@ export interface VaultHubInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "GET_LABEL_NAME_BY_INDEX",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "HAS_MINTED_PERMIT_TYPE_HASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "INDEX_QUERY_PERMIT_TYPE_HASH",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "INIT_VAULT_TYPE_HASH",
+    functionFragment: "INIT_VAULT_PERMIT_TYPE_HASH",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -115,6 +127,25 @@ export interface VaultHubInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "SAVE_PERMIT_TYPE_HASH",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "VAULT_HAS_REGISTER_PERMIT_TYPE_HASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLabelNameByIndex",
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "hasMinted",
@@ -176,13 +207,9 @@ export interface VaultHubInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "treasury", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "vaultHasRegister",
-    values: [string]
+    values: [string, BigNumberish, BigNumberish, BytesLike, BytesLike]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "BASE_PERMIT_TYPE_HASH",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "DOMAIN_NAME",
     data: BytesLike
@@ -200,11 +227,19 @@ export interface VaultHubInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "GET_LABEL_NAME_BY_INDEX",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "HAS_MINTED_PERMIT_TYPE_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "INDEX_QUERY_PERMIT_TYPE_HASH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "INIT_VAULT_TYPE_HASH",
+    functionFragment: "INIT_VAULT_PERMIT_TYPE_HASH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -217,6 +252,18 @@ export interface VaultHubInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "SAVE_PERMIT_TYPE_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "VAULT_HAS_REGISTER_PERMIT_TYPE_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLabelNameByIndex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "hasMinted", data: BytesLike): Result;
@@ -307,8 +354,6 @@ export interface VaultHub extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    BASE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
-
     DOMAIN_NAME(overrides?: CallOverrides): Promise<[string]>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
@@ -317,15 +362,37 @@ export interface VaultHub extends BaseContract {
 
     DOMAIN_VERSION(overrides?: CallOverrides): Promise<[string]>;
 
+    GET_LABEL_NAME_BY_INDEX(overrides?: CallOverrides): Promise<[string]>;
+
+    HAS_MINTED_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
+
     INDEX_QUERY_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
 
-    INIT_VAULT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
+    INIT_VAULT_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
 
     MINT_SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
 
     NAME_QUERY_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
 
     SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
+
+    TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    VAULT_HAS_REGISTER_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getLabelNameByIndex(
+      addr: string,
+      deadline: BigNumberish,
+      index: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     hasMinted(
       addr: string,
@@ -408,11 +475,13 @@ export interface VaultHub extends BaseContract {
 
     vaultHasRegister(
       addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
-
-  BASE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
   DOMAIN_NAME(overrides?: CallOverrides): Promise<string>;
 
@@ -422,15 +491,37 @@ export interface VaultHub extends BaseContract {
 
   DOMAIN_VERSION(overrides?: CallOverrides): Promise<string>;
 
+  GET_LABEL_NAME_BY_INDEX(overrides?: CallOverrides): Promise<string>;
+
+  HAS_MINTED_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
   INDEX_QUERY_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
-  INIT_VAULT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+  INIT_VAULT_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
   MINT_SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
   NAME_QUERY_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
   SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
+  TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH(
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  VAULT_HAS_REGISTER_PERMIT_TYPE_HASH(
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getLabelNameByIndex(
+    addr: string,
+    deadline: BigNumberish,
+    index: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   hasMinted(
     addr: string,
@@ -511,11 +602,16 @@ export interface VaultHub extends BaseContract {
 
   treasury(overrides?: CallOverrides): Promise<string>;
 
-  vaultHasRegister(addr: string, overrides?: CallOverrides): Promise<boolean>;
+  vaultHasRegister(
+    addr: string,
+    deadline: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
-    BASE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
-
     DOMAIN_NAME(overrides?: CallOverrides): Promise<string>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
@@ -524,15 +620,37 @@ export interface VaultHub extends BaseContract {
 
     DOMAIN_VERSION(overrides?: CallOverrides): Promise<string>;
 
+    GET_LABEL_NAME_BY_INDEX(overrides?: CallOverrides): Promise<string>;
+
+    HAS_MINTED_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
     INDEX_QUERY_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
-    INIT_VAULT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+    INIT_VAULT_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
     MINT_SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
     NAME_QUERY_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
     SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
+    TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    VAULT_HAS_REGISTER_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getLabelNameByIndex(
+      addr: string,
+      deadline: BigNumberish,
+      index: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     hasMinted(
       addr: string,
@@ -613,7 +731,14 @@ export interface VaultHub extends BaseContract {
 
     treasury(overrides?: CallOverrides): Promise<string>;
 
-    vaultHasRegister(addr: string, overrides?: CallOverrides): Promise<boolean>;
+    vaultHasRegister(
+      addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
@@ -634,8 +759,6 @@ export interface VaultHub extends BaseContract {
   };
 
   estimateGas: {
-    BASE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
-
     DOMAIN_NAME(overrides?: CallOverrides): Promise<BigNumber>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -644,15 +767,37 @@ export interface VaultHub extends BaseContract {
 
     DOMAIN_VERSION(overrides?: CallOverrides): Promise<BigNumber>;
 
+    GET_LABEL_NAME_BY_INDEX(overrides?: CallOverrides): Promise<BigNumber>;
+
+    HAS_MINTED_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
     INDEX_QUERY_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    INIT_VAULT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+    INIT_VAULT_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
 
     MINT_SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
 
     NAME_QUERY_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
 
     SAVE_PERMIT_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    VAULT_HAS_REGISTER_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getLabelNameByIndex(
+      addr: string,
+      deadline: BigNumberish,
+      index: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     hasMinted(
       addr: string,
@@ -735,15 +880,15 @@ export interface VaultHub extends BaseContract {
 
     vaultHasRegister(
       addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    BASE_PERMIT_TYPE_HASH(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     DOMAIN_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -752,11 +897,19 @@ export interface VaultHub extends BaseContract {
 
     DOMAIN_VERSION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    GET_LABEL_NAME_BY_INDEX(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    HAS_MINTED_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     INDEX_QUERY_PERMIT_TYPE_HASH(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    INIT_VAULT_TYPE_HASH(
+    INIT_VAULT_PERMIT_TYPE_HASH(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -769,6 +922,24 @@ export interface VaultHub extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     SAVE_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    TOTAL_SAVED_ITEMS_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    VAULT_HAS_REGISTER_PERMIT_TYPE_HASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLabelNameByIndex(
+      addr: string,
+      deadline: BigNumberish,
+      index: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -853,6 +1024,10 @@ export interface VaultHub extends BaseContract {
 
     vaultHasRegister(
       addr: string,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

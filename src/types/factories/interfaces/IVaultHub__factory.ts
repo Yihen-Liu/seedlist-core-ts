@@ -20,6 +20,50 @@ const _abi = [
         type: "uint256",
       },
       {
+        internalType: "uint64",
+        name: "index",
+        type: "uint64",
+      },
+      {
+        internalType: "uint8",
+        name: "v",
+        type: "uint8",
+      },
+      {
+        internalType: "bytes32",
+        name: "r",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "s",
+        type: "bytes32",
+      },
+    ],
+    name: "getLabelNameByIndex",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "deadline",
+        type: "uint256",
+      },
+      {
         internalType: "uint8",
         name: "v",
         type: "uint8",
@@ -93,9 +137,9 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint16",
+        internalType: "uint64",
         name: "index",
-        type: "uint16",
+        type: "uint64",
       },
       {
         internalType: "uint256",
@@ -309,6 +353,26 @@ const _abi = [
         internalType: "address",
         name: "addr",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "deadline",
+        type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "v",
+        type: "uint8",
+      },
+      {
+        internalType: "bytes32",
+        name: "r",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "s",
+        type: "bytes32",
       },
     ],
     name: "vaultHasRegister",
